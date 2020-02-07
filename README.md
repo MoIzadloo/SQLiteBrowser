@@ -26,7 +26,7 @@ or\
 `cd SQLiteBrowser`\
  `chmod +x sqlitebrowser.py`\
  >Run and enjoy:\
- `python sqlitebrowser.py`
+ `python3 sqlitebrowser.py`
  ### Windows
  >Download the tool from github:\
  `Click on (Clone or Download) button and download zip file`\
