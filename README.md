@@ -6,7 +6,7 @@ SQLiteBrowser Version 0.1
 ### Dependencies :
 >tabulate
 ### Install Dependencies :
-`pip install -r requirements`\
+`pip install -r requirements.txt`\
 or\
 `pip install tabulate`
 ### Screenshot:
