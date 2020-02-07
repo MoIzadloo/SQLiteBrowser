@@ -4,7 +4,8 @@ SQLiteBrowser Version 0.1
 ### Description :
 >SQLiteBrowser is a simple tool for browsing sqlite databases and execute sqlite commands as well written in python 3
 ### Dependencies :
->tabulate
+>tabulate\
+>tkinter
 ### Install Dependencies :
 `pip install -r requirements.txt`\
 or\
