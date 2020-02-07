@@ -7,9 +7,12 @@ SQLiteBrowser Version 0.1
 >tabulate\
 >tkinter
 ### Install Dependencies :
-`pip install -r requirements.txt`\
+`sudo pip3 install -r requirements.txt`\
 or\
-`pip install tabulate`
+`sudo pip3 install tabulate`
+### Install tkinter :
+`sudo apt-get update`\
+`sudo apt-get install python python3-tk`
 ### Screenshot:
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(1).png)\
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(2).png)\
