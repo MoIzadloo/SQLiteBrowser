@@ -19,8 +19,8 @@ or\
 >Download the tool from github\
 `git clone https://github.com/MoIzadloo/SQLiteBrowser.git`\
 >Set script execution permission\
-`cd SQLiteBrowser
- chmod +x sqlitebrowser`\
+`cd SQLiteBrowser`\
+ `chmod +x sqlitebrowser`\
  >Run and enjoy:\
  `python sqlitebrowser`
  ### Windows
