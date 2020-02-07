@@ -32,3 +32,8 @@ or\
  `cd to the sqlitebrowser.py file path`\
  >Run and enjoy:\
  `python sqlitebrowser.py`
+ ### Contact us
+ >Email :
+ `moizadloo@gmail.com`
+ 
+
