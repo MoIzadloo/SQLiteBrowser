@@ -155,20 +155,6 @@ class sqlite():
         self.__c.execute(f'CREATE TABLE IF NOT EXISTS {tbName} ({columns})')
         self.conn_commit()
 
-    def insertInto(self,tbName,*args):
-        '''
-        ###############################
-
-        This method will insert values into columns of a specific table
-
-        Example : db.insertInto('employe' , 'jack' , 'Acton' , 3000)
-
-        ###############################
-        '''
-        inputs = self.reflectorArgs(args)
-        self.__c.execute(f'INSERT INTO {tbName} VALUES ({inputs})')
-        self.conn_commit()
-
     def selectAll(self,tbName,fetch = 'all'):
         '''
         ###############################
@@ -188,94 +174,14 @@ class sqlite():
         elif 'many' in fetch:
             return self.__c.fetchmany(fetch[1])
 
-    def selectAllFrom(self,tbName,fetch = 'all',**kwargs):
-        '''
-        ###############################
-
-        This method will select and fetch (all,one,many) all values in all columns of a specific table where 
-        Have true information
-
-        Example : db.selectAllFrom('employe', fetch = 'all' , last = 'Acton')
-
-        ###############################
-        '''
-        column = ''
-        value = ''
-        for key in kwargs.keys():
-            column = key
-        for var in kwargs.values():
-            value = var
-        self.__c.execute(f'SELECT * FROM {tbName} WHERE {column} = "{value}"')
-        self.conn_commit()
-        if fetch == 'all':
-            return self.__c.fetchall()
-        elif fetch == 'one':
-            return self.__c.fetchone()
-        elif 'many' in fetch:
-            return self.__c.fetchmany(fetch[1])
-
-    def selectValueFrom(self,tbName,*args,fetch = 'all',**kwargs):
-        '''
-        ###############################
-
-        This method will select and fetch (all,one,many) specific values in specific columns of a specific table where 
-        Have true information
-
-        Example : db.selectAllFrom('employe', 'last' , 'first' , fetch = 'all' , last = 'Acton' )
-
-        ###############################
-        '''
-        output = self.reflectorArgs(args).replace('"' , '' )
-        column = ''
-        value = ''
-        for key in kwargs.keys():
-            column = key
-        for var in kwargs.values():
-            value = var
-        self.__c.execute(f'SELECT {output} FROM {tbName} WHERE {column} = "{value}"')
-        self.conn_commit()
-        if fetch == 'all':
-            return self.__c.fetchall()
-        elif fetch == 'one':
-            return self.__c.fetchone()
-        elif 'many' in fetch:
-            return self.__c.fetchmany(fetch[1])
-
-    def dropTable(self,tbName):
-        '''
-        ###############################
-
-        This method will remove table from database if table is exists
-
-        Example : db.dropTable('employe')
-
-        ###############################
-        '''
-        self.__c.execute(f'DROP TABLE IF EXISTS {tbName}')
-        self.conn_commit()
-
-    def delete(self,tbName,**kwargs):
-        '''
-        ###############################
-
-        This method will remove values from database if the informations
-        Are correct
-
-        Example : db.delete('employe' , Elast = 'Acton' )
-
-        ###############################
-        '''
-        output = self.reflectorKwargsH(kwargs)
-        self.__c.execute(f'DELETE FROM {tbName} Where {output}')
-        self.__conn.commit()
-
 
     def show_tables(self):
-        self.__c.execute('SELECT tbl_name from sqlite_master')
+        self.__c.execute('SELECT tbl_name FROM sqlite_master')
         self.conn_commit()
         return self.__c.fetchall()
 
 
-    
-        
-
+    def get_rows(self,tbname):
+        self.__c.execute(f'SELECT  COUNT(*) FROM {tbname}')
+        self.conn_commit()
+        return self.__c.fetchall()
