@@ -1,1 +1,1 @@
-tabulate
+PyQt5
