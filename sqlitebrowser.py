@@ -1,241 +1,286 @@
 import os
-import sqlite3 as sql
-from tkinter import ttk
-from tkinter import *
-from tkinter import Menu
-from tkinter import filedialog as fd
-from tkinter.filedialog import askdirectory 
-from tkinter import scrolledtext
-from tkinter import messagebox
-
-from tabulate import tabulate
-
+import sys
+import sqlite3
+from PyQt5 import QtCore, QtGui, QtWidgets 
 from modules.sqlite import sqlite
 
-path_gif = os.path.dirname(os.path.realpath(__file__)) + '/res/database-settings-icon.gif'
-path_ico = os.path.dirname(os.path.realpath(__file__)) + '/res/database-settings-icon.ico'
 
+class Ui_menu_window(QtWidgets.QWidget):
+    def __init__(self,menu_window):
+        super().__init__()
+        self.path = os.path.dirname(__file__)
+        self.fileName = ''
+        self.filePath = ''
+        self.menu_window = menu_window
+    def setupUi(self):
+        self.menu_window.setObjectName("menu_window")
+        self.menu_window.setFixedSize(800, 605)
+        self.menu_window.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(self.path + "/res/database-settings-icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.menu_window.setWindowIcon(icon)
+        self.centralwidget = QtWidgets.QWidget(self.menu_window)
+        self.centralwidget.setObjectName("centralwidget")
+        self.img_menu = QtWidgets.QLabel(self.centralwidget)
+        self.img_menu.setGeometry(QtCore.QRect(230, 10, 341, 331))
+        self.img_menu.setText("")
+        self.img_menu.setPixmap(QtGui.QPixmap(self.path + "/res/database-settings-icon.gif"))
+        self.img_menu.setScaledContents(True)
+        self.img_menu.setObjectName("img_menu")
+        self.btn_open = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_open.setGeometry(QtCore.QRect(270, 360, 261, 41))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(14)
+        self.btn_open.setFont(font)
+        self.btn_open.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_open.setObjectName("btn_open")
+        self.btn_create = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_create.setGeometry(QtCore.QRect(270, 420, 261, 41))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(14)
+        self.btn_create.setFont(font)
+        self.btn_create.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_create.setObjectName("btn_create")
+        self.btn_exit = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_exit.setGeometry(QtCore.QRect(270, 480, 261, 41))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(14)
+        self.btn_exit.setFont(font)
+        self.btn_exit.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_exit.setObjectName("btn_exit")
+        self.menu_window.setCentralWidget(self.centralwidget)
 
-def clear_widgets(name):
-    '''
-    ###############################
+        self.retranslateUi(self.menu_window)
+        QtCore.QMetaObject.connectSlotsByName(self.menu_window)
 
-    this function will delete all widgets from a window
+        self.btn_open.clicked.connect(self.open_btn)
+        self.btn_create.clicked.connect(self.create_btn)
+        self.btn_exit.clicked.connect(self.exit_btn)
 
-    ###############################
-    '''
+    def retranslateUi(self, menu_window):
+        _translate = QtCore.QCoreApplication.translate
+        menu_window.setWindowTitle(_translate("menu_window", "SQLite Browser"))
+        self.btn_open.setText(_translate("menu_window", "Open Database..."))
+        self.btn_create.setText(_translate("menu_window", "Create New Database"))
+        self.btn_exit.setText(_translate("menu_window", "Exit"))
+    
+    def open_btn(self):
+        self.fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"Select the database file", "","All Files (*.db)")
+        if self.fileName:
+            self.change_window(self.fileName)
 
-    list = name.grid_slaves()
-    for l in list:
-        l.destroy()
+    def create_btn(self):
+        name = self.getText()
+        if name != '':
+            self.filePath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a directory',self.path)
+            if self.filePath:
+                self.change_window(self.filePath + f'/{name}.db')
+        
 
-def center_window(page,width=300, height=200):
-    '''
-    ###############################
-
-    this function will get screen width and height and 
-    calculate position x and y coordinates then set the window 
-    geometry
-
-    ###############################
-    '''
-
-    # get screen width and height
-    screen_width = page.winfo_screenwidth()
-    screen_height = page.winfo_screenheight()
-    # calculate position x and y coordinates
-    x = (screen_width/2) - (width/2)
-    y = (screen_height/2) - (height/2)
-    page.geometry('%dx%d+%d+%d' % (width, height, x, y))
+    def exit_btn(self):
+        sys.exit()
 
     
-def pageDesign(page,height,width):
-    '''
-    ###############################
-
-    this function will set defualt page settings 
-
-    ###############################
-    '''
-    center_window(page,height,width)
-    if "nt" == os.name:
-        page.iconbitmap(bitmap = path_ico)
-    page.title('SQLite Browser')
-    page.configure(background= '#DCDCDC')
-    page.resizable(0,0)
-
-def get_tables(database):
-    '''
-    ###############################
-
-    this function will dump tables from database file 
-
-    ###############################
-    '''
-    tables = database.show_tables()
-    result = []
-    for table_t in tables:
-        for table_l in table_t:
-            if table_l not in result:
-                result.append(table_l)
-
-    return result
-    
-
-
-
-
-def main():
-    '''
-    ###############################
-
-    this function is the main page configuration functaion
-
-    ###############################
-    '''
-    window = Tk()
-
-    def btnBrowse():
-        '''
-    ###############################
-
-    this function will appear a page and ask you for opening
-    your database file and check if it is a sqlite file or
-    not
-
-    ###############################
-        '''
-        fileName = fd.askopenfilenames()
-        ext = os.path.splitext(fileName[0])[-1].lower()
-        if ext == '.db':
-            window.destroy()
-            desk(fileName)
+    def getText(self):
+        text, okPressed = QtWidgets.QInputDialog.getText(self.menu_window, "Setup","Database name:", QtWidgets.QLineEdit.Normal, "")
+        if okPressed and text != '':
+            return text
         else:
-            messagebox.showerror('file is not a database', 'please choose a database file')            
+            return '' 
+
+    def change_window(self,path):
+        self.menu_window.hide()
+        self.tool_window = QtWidgets.QMainWindow()
+        self.ui = Ui_tool_window(path)
+        self.ui.setupUi(self.tool_window)
+        self.tool_window.show()
+        
+
+class Ui_tool_window(object):
+    def get_tables(self,database):
+        tables = database.show_tables()
+        result = []
+        for table_t in tables:
+            for table_l in table_t:
+                if table_l not in result:
+                    result.append(table_l)
+
+        return result
+
+    def __init__(self,path):
 
 
-    def btnCreateDB():
-        '''
-    ###############################
+        self._translate = QtCore.QCoreApplication.translate
+        self.script_path = os.path.dirname(__file__)
+        self.path = path
+        self.db = sqlite(path)
+        self.tables = self.get_tables(self.db)
 
-    this function will appear a page and ask you to choose
-    the database path and then create a page and ask
-    for database name
+    def setupUi(self, tool_window):
+        tool_window.setObjectName("tool_window")
+        tool_window.setFixedSize(800, 600)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(self.script_path + "/res/database-settings-icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        tool_window.setWindowIcon(icon)
+        self.centralwidget = QtWidgets.QWidget(tool_window)
+        self.centralwidget.setObjectName("centralwidget")
+        self.txt_tool = QtWidgets.QLabel(self.centralwidget)
+        self.txt_tool.setGeometry(QtCore.QRect(30, 20, 541, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(16)
+        self.txt_tool.setFont(font)
+        self.txt_tool.setObjectName("txt_tool")
+        self.cbb_tables = QtWidgets.QComboBox(self.centralwidget)
+        self.cbb_tables.setGeometry(QtCore.QRect(580, 20, 181, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        self.cbb_tables.setFont(font)
+        self.cbb_tables.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.cbb_tables.setObjectName("cbb_tables")
+        self.tw_display = QtWidgets.QTableWidget(self.centralwidget)
+        self.tw_display.setGeometry(QtCore.QRect(30, 70, 731, 401))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        self.tw_display.setFont(font)
+        self.edt_command = QtWidgets.QLineEdit(self.centralwidget)
+        self.edt_command.setGeometry(QtCore.QRect(30, 490, 481, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        self.edt_command.setFont(font)
+        self.edt_command.setObjectName("edt_command")
+        self.btn_execute = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_execute.setGeometry(QtCore.QRect(550, 490, 93, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(10)
+        self.btn_execute.setFont(font)
+        self.btn_execute.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_execute.setObjectName("btn_execute")
+        self.btn_clear = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_clear.setGeometry(QtCore.QRect(670, 490, 93, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(10)
+        self.btn_clear.setFont(font)
+        self.btn_clear.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_clear.setObjectName("btn_clear")
+        self.btn_browse = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_browse.setGeometry(QtCore.QRect(200, 540, 191, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(10)
+        self.btn_browse.setFont(font)
+        self.btn_browse.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_browse.setObjectName("btn_browse")
+        self.btn_exit = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_exit.setGeometry(QtCore.QRect(410, 540, 191, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(10)
+        self.btn_exit.setFont(font)
+        self.btn_exit.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_exit.setObjectName("btn_exit")
+        tool_window.setCentralWidget(self.centralwidget)
+        self.statusbar = QtWidgets.QStatusBar(tool_window)
+        self.statusbar.setObjectName("statusbar")
+        tool_window.setStatusBar(self.statusbar)
 
-    ###############################
-        '''
-        def btnCreate():
-            name = inp.get()
-            db_path = dirName + '/' + name + '.db'
-            if os.path.exists(db_path) == False:
-                with open(db_path , 'w') as f:
-                    create.destroy()
-                    window.destroy()
-                desk((db_path,))
-            else:
-                messagebox.showerror('file is already exist', 'please choose another name')
-                create.destroy()
+        self.btn_browse.clicked.connect(self.browse_btn)
+        self.btn_exit.clicked.connect(self.exit_btn)
+        self.btn_execute.clicked.connect(self.execute_btn)
+        self.btn_clear.clicked.connect(self.clear_btn)
 
-                
-                
-        dirName = askdirectory()
-        create = Tk()
-        pageDesign(create,300,100)
-        lbl=Label(create,text='Database name:',font=('Times' , '11','italic'),fg='#17202a',bg='#DCDCDC')
-        lbl.place(relx=0.01, rely=0.03 , anchor=NW)
-        inp = Entry(create,width=20)
-        inp.place(relx=0.7, rely=0.15, anchor=CENTER)
-        btn_browse = Button(create,text='Create',width=20,command=btnCreate)
-        btn_browse.place(relx=0.5, rely=0.8, anchor=CENTER)
-        create.mainloop()
+        self.retranslateUi(tool_window)
+        QtCore.QMetaObject.connectSlotsByName(tool_window)
 
-
-    pageDesign(window,520,420)    
-    img = PhotoImage(file=path_gif)
-    panel = Label(window, image = img , bg='#DCDCDC')
-    panel.place(relx=0.5, rely=0.33, anchor=CENTER)
-    btn_browse = Button(window,text='Open Database...',width=27,command=btnBrowse)
-    btn_browse.place(relx=0.5, rely=0.7, anchor=CENTER)
-    btn_browse = Button(window,text='Create New Database',width=27,command=btnCreateDB)
-    btn_browse.place(relx=0.5, rely=0.795, anchor=CENTER)
-    btn_exit = Button(window,text='Exit',width=27,command= lambda : exit())
-    btn_exit.place(relx=0.5, rely=0.89, anchor=CENTER)
-    window.mainloop()
-
-def desk(fp):
-    '''
-    ###############################
-
-    this function is the second page of program
-    contained database tools
-
-    ###############################
-    '''
-
-    def combobx():
-        '''
-    ###############################
-
-    combobox configuraion function
-
-    ###############################
-        '''
-        table = combo.get()
-        sctext.delete(1.0,END)
-        sctext.insert(INSERT,tabulate(db.selectAll(table)) + '\n')
-
-    def execute():
-        '''
-    ###############################
-
-    this function will get user sqlite command and
-    check if its correct or not
-
-    ###############################
-        '''
-        input_sql = inp.get()
-        print(input_sql)
-        if input_sql == '':
-             messagebox.showerror('the input is empty !', 'please fill the input box and try again')
-        try:
-            db.execute_manuall(input_sql)
-        except  sql.Error as error:
-            print(error)
-            messagebox.showerror('Wrong Command', 'wrong command executed try again !\nerror info : {}'.format(error))
-        tables = get_tables(db)
-        combo['values']= tables
-        combo.current(0)
-        combo.update()
-         
-
-    def Clear():
-        inp.delete(0,END)
-        inp.update()
-
-    db = sqlite(fp[0])
-    tables = get_tables(db)
-    window = Tk()
-    pageDesign(window,520,420)
-    lbl=Label(window,text='choose the table that you want to browse :',font=('Times' , '11','italic'),fg='#17202a',bg='#DCDCDC')
-    lbl.place(relx=0.01, rely=0.03 , anchor=NW)
-    combo = ttk.Combobox(window,width=23)
-    combo['values']= tables
-    if len(tables) != 0 :
-        combo.current(0)
-    combo.place(relx=0.54, rely=0.03 , anchor=NW)
-    sctext = scrolledtext.ScrolledText(window,height=17,width=55)
-    sctext.place(relx=0.485 , rely=0.45 ,anchor=CENTER)
-    inp = Entry(window,width=37)
-    inp.place(relx=0.3305, rely=0.85, anchor=CENTER)
-    btn_execute = Button(window,text='Execute',width=8,command=execute)
-    btn_execute.place(relx=0.72, rely=0.85, anchor=CENTER)
-    btn_clear = Button(window,text='Clear',width=8,command=Clear)
-    btn_clear.place(relx=0.88, rely=0.85, anchor=CENTER)
-    btn_exit = Button(window,text='Exit',width=15,command= lambda : exit())
-    btn_exit.place(relx=0.67, rely=0.94, anchor=CENTER)
-    btn_browse = Button(window,text='Browse',width=15,command= combobx)
-    btn_browse.place(relx=0.33, rely=0.94, anchor=CENTER)
-    window.mainloop()
+    def retranslateUi(self, tool_window):
+        
+        tool_window.setWindowTitle(self._translate("tool_window", "SQLite Browser"))
+        self.txt_tool.setText(self._translate("tool_window", "choose the table that you want to browse :"))
+        __sortingEnabled = self.tw_display.isSortingEnabled()
+        self.tw_display.setSortingEnabled(False)
+        self.combobox()
+        self.tw_display.setSortingEnabled(__sortingEnabled)
+        self.btn_execute.setText(self._translate("tool_window", "Execute"))
+        self.btn_clear.setText(self._translate("tool_window", "Clear"))
+        self.btn_browse.setText(self._translate("tool_window", "Browse"))
+        self.btn_exit.setText(self._translate("tool_window", "Exit"))
     
+    def combobox(self):
+        if len(self.tables) != 0:
+            for idx , table in enumerate(self.tables):
+                self.cbb_tables.addItem(table)
+                self.cbb_tables.setItemText(idx , self._translate("tool_window", table))
+    
+    def browse_btn(self):
+        def get_row(database,tbname):
+            return database.get_rows(tbname)[0]
+        
+        def get_columns(database,tbname):
+            return database.selectAll(tbname)
 
-main()
+        table = self.cbb_tables.currentText()
+        if table != '':
+            row_count = get_row(self.db,table)[0]
+            columns =  get_columns(self.db,table)
+            if columns == []:
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setWindowIcon(QtGui.QIcon(self.script_path + "/res/database-settings-icon.ico"))
+                msg.setWindowTitle(f'Table ({table}) is empty !')
+                msg.setText('Choose another table and try again!')
+                msg.exec_()
+            else:
+                column_count = len(columns[0])
+                self.tw_display.setRowCount(row_count)
+                self.tw_display.setColumnCount(column_count)
+                for idr,item in enumerate(columns):
+                    for idc,column in enumerate(item):
+                        self.tw_display.setItem(idr,idc,QtWidgets.QTableWidgetItem(str(column)))
+        else:
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setWindowIcon(QtGui.QIcon(self.script_path + "/res/database-settings-icon.ico"))
+            msg.setWindowTitle(f'Database is empty !')
+            msg.setText('Create a table and try again !')
+            msg.exec_()
+
+        
+    def execute_btn(self):
+        command = self.edt_command.text()
+        msg =  QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Critical)
+        msg.setWindowIcon(QtGui.QIcon(self.script_path + "/res/database-settings-icon.ico"))
+        if command == '':
+            msg.setWindowTitle('the input is empty !')
+            msg.setText('please fill the input box and try again')
+            msg.exec_()
+        try:
+            self.db.execute_manuall(command)
+        except sqlite3.Error as error:
+            msg.setWindowTitle('Wrong Command')
+            msg.setText(f'wrong command executed try again !\nerror info : {error}')
+            msg.exec_()
+        
+        self.tables = self.get_tables(self.db)
+        self.cbb_tables.clear()
+        self.combobox()
+
+    def exit_btn(self):
+        sys.exit()
+
+    def clear_btn(self):
+        self.edt_command.setText('')
+
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    menu_window = QtWidgets.QMainWindow()
+    ui = Ui_menu_window(menu_window)
+    ui.setupUi()
+    menu_window.show()
+    sys.exit(app.exec_())
