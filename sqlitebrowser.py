@@ -114,7 +114,7 @@ class Ui_tool_window(object):
 
 
         self._translate = QtCore.QCoreApplication.translate
-        self.script_path = os.path.dirname(__file__)
+        self.script_path = os.path.dirname(os.path.realpath(__file__))
         self.path = path
         self.db = sqlite(path)
         self.tables = self.get_tables(self.db)
