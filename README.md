@@ -1,4 +1,4 @@
-SQLiteBrowser Version 0.1
+SQLiteBrowser Version 0.2
 =============
 >Author : Mostafa Izadloo , Reza Salehi
 ### Description :
