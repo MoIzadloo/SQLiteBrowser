@@ -8,7 +8,7 @@ from modules.sqlite import sqlite
 class Ui_menu_window(QtWidgets.QWidget):
     def __init__(self,menu_window):
         super().__init__()
-        self.path = os.path.dirname(__file__)
+        self.path = os.path.dirname(os.path.realpath(__file__))
         self.fileName = ''
         self.filePath = ''
         self.menu_window = menu_window
