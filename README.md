@@ -8,12 +8,18 @@ SQLiteBrowser Version 0.2
 ### Install Dependencies :
 ### Linux
 `sudo pip3 install -r requirements.txt`\
+`sudo apt-get install python3-pyqt5`\
+`sudo apt-get install pyqt5-dev-tools`\
+`sudo apt-get install qttools5-dev-tools`\
 or\
-`sudo pip3 install PyQt5`
+`sudo pip3 install PyQt5`\
+`sudo apt-get install python3-pyqt5`\
+`sudo apt-get install pyqt5-dev-tools`\
+`sudo apt-get install qttools5-dev-tools``
 ### Windows
 `pip3 install -r requirements.txt`\
 or\
-`pip3 install PyQt5`
+`pip3 install PyQt5
 ### Screenshot:
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(1).png)\
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(2).png)\
