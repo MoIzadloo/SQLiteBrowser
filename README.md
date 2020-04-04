@@ -4,15 +4,11 @@ SQLiteBrowser Version 0.1
 ### Description :
 >SQLiteBrowser is a simple tool for browsing sqlite databases and execute sqlite commands as well written in python 3
 ### Dependencies :
->tabulate\
->tkinter
+>PyQt5
 ### Install Dependencies :
 `sudo pip3 install -r requirements.txt`\
 or\
-`sudo pip3 install tabulate`
-### Install tkinter :
-`sudo apt-get update`\
-`sudo apt-get install python python3-tk`
+`sudo pip3 install PyQt5`
 ### Screenshot:
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(1).png)\
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(2).png)\
