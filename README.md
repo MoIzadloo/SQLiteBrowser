@@ -25,7 +25,8 @@ or\
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(2).png)\
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(3).png)\
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(4).png)\
-![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(5).png)
+![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(5).png)\
+![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(6).png)
 ### Download & Config & Usage:
 ### Linux
 >Download the tool from github\
