@@ -4,6 +4,27 @@ import sqlite3
 from PyQt5 import QtCore, QtGui, QtWidgets 
 from modules.sqlite import sqlite
 
+QtWidgets
+class InputDialog(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.first = QtWidgets.QLineEdit(self)
+        self.second = QtWidgets.QLineEdit(self)
+        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel, self);
+
+        layout = QtWidgets.QFormLayout(self)
+        layout.addRow('Column number', self.first)
+        layout.addRow('Search query', self.second)
+        layout.addWidget(buttonBox)
+
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+    def getInputs(self):
+        return (self.first.text(), self.second.text())
+
+
 
 class Ui_menu_window(QtWidgets.QWidget):
     def __init__(self,menu_window):
@@ -176,6 +197,16 @@ class Ui_tool_window(object):
         self.btn_browse.setFont(font)
         self.btn_browse.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.btn_browse.setObjectName("btn_browse")
+
+        self.btn_search = QtWidgets.QPushButton(self.centralwidget)
+        self.btn_search.setGeometry(QtCore.QRect(670, 540, 93, 31))
+        font = QtGui.QFont()
+        font.setFamily("Mongolian Baiti")
+        font.setPointSize(10)
+        self.btn_search.setFont(font)
+        self.btn_search.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.btn_search.setObjectName("btn_search")
+
         self.btn_exit = QtWidgets.QPushButton(self.centralwidget)
         self.btn_exit.setGeometry(QtCore.QRect(410, 540, 191, 31))
         font = QtGui.QFont()
@@ -193,6 +224,7 @@ class Ui_tool_window(object):
         self.btn_exit.clicked.connect(self.exit_btn)
         self.btn_execute.clicked.connect(self.execute_btn)
         self.btn_clear.clicked.connect(self.clear_btn)
+        self.btn_search.clicked.connect(self.search_btn)
 
         self.retranslateUi(tool_window)
         QtCore.QMetaObject.connectSlotsByName(tool_window)
@@ -208,8 +240,61 @@ class Ui_tool_window(object):
         self.btn_execute.setText(self._translate("tool_window", "Execute"))
         self.btn_clear.setText(self._translate("tool_window", "Clear"))
         self.btn_browse.setText(self._translate("tool_window", "Browse"))
+        self.btn_search.setText(self._translate("tool_window", "Search"))
         self.btn_exit.setText(self._translate("tool_window", "Exit"))
     
+    def search_btn(self):
+        def not_found(inp):
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.setWindowIcon(QtGui.QIcon(self.script_path + "/res/database-settings-icon.ico"))
+            msg.setWindowTitle(f'No record found !')
+            msg.setText(f'No record with query {inp[1]} in column {inp[0]}')
+            msg.exec_()
+        
+        def empty_filed():
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setWindowIcon(QtGui.QIcon(self.script_path + "/res/database-settings-icon.ico"))
+                msg.setWindowTitle(f'Requirement fields are empty !')
+                msg.setText('Fill requirement fields and try again !')
+                msg.exec_()
+
+        def get_columns(database,tbname):
+            return database.selectAll(tbname)
+        if len(self.tables) != 0:
+            dialog = InputDialog()
+            dialog.setWindowTitle(self._translate("menu_window", "SQLite Browser"))
+            dialog.setWindowIcon(QtGui.QIcon(self.script_path + "/res/database-settings-icon.ico"))
+            if dialog.exec():
+                inp = dialog.getInputs()
+                if (inp[0] == '' and inp[1] == '') or (inp[0] == '' and inp[1] != '') or (inp[0] != '' and inp[1] == ''):
+                    empty_filed()
+                else:
+                    try:
+                        table = self.cbb_tables.currentText()
+                        if table != '':
+                            columns =  get_columns(self.db,table)
+                            items = []
+                            for column in columns:
+                                if str(inp[1]).upper() in str(column[int(inp[0])-1]).upper():
+                                    items.append(column)
+                                    self.tw_display.setRowCount(len(items))
+                                    self.tw_display.setColumnCount(len(column))
+                            if len(items) != 0:
+                                self.tw_display.setRowCount(len(items))
+                                self.tw_display.setColumnCount(len(column))
+                            else:
+                                not_found(inp)
+                            for idr,item in enumerate(items):
+                                for idc,query in enumerate(item):
+                                    self.tw_display.setItem(idr,idc,QtWidgets.QTableWidgetItem(str(query)))
+                    except:
+                        not_found(inp)
+                                    
+
+            
+
     def combobox(self):
         if len(self.tables) != 0:
             for idx , table in enumerate(self.tables):
