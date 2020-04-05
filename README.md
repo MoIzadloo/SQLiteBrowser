@@ -19,7 +19,7 @@ or\
 ### Windows
 `pip3 install -r requirements.txt`\
 or\
-`pip3 install PyQt5
+`pip3 install PyQt5`
 ### Screenshot:
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(1).png)\
 ![](https://github.com/MoIzadloo/SQLiteBrowser/blob/master/Screenshot/Screenshot%20(2).png)\
