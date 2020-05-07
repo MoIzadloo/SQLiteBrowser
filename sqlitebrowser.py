@@ -89,7 +89,7 @@ class Ui_menu_window(QtWidgets.QWidget):
         self.btn_exit.setText(_translate("menu_window", "Exit"))
     
     def open_btn(self):
-        self.fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"Select the database file", "","All Files (*.db)")
+        self.fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"Select the database file", "","All Files (*.sqlite3)")
         if self.fileName:
             self.change_window(self.fileName)
 
@@ -98,7 +98,7 @@ class Ui_menu_window(QtWidgets.QWidget):
         if name != '':
             self.filePath = QtWidgets.QFileDialog.getExistingDirectory(self, 'Select a directory',self.path)
             if self.filePath:
-                self.change_window(self.filePath + f'/{name}.db')
+                self.change_window(self.filePath + f'/{name}.sqlite3')
         
 
     def exit_btn(self):
@@ -275,20 +275,23 @@ class Ui_tool_window(object):
                         table = self.cbb_tables.currentText()
                         if table != '':
                             columns =  get_columns(self.db,table)
+                            column_name = self.db.get_columns(table)
                             items = []
                             for column in columns:
                                 if str(inp[1]).upper() in str(column[int(inp[0])-1]).upper():
                                     items.append(column)
                                     self.tw_display.setRowCount(len(items))
-                                    self.tw_display.setColumnCount(len(column))
+                                    self.tw_display.setColumnCount(len(column) + 1)
                             if len(items) != 0:
                                 self.tw_display.setRowCount(len(items))
-                                self.tw_display.setColumnCount(len(column))
+                                self.tw_display.setColumnCount(len(column) + 1)
                             else:
                                 not_found(inp)
+                            for index,name in enumerate(column_name):
+                                self.tw_display.setItem(0,index,QtWidgets.QTableWidgetItem(str(name[1])))
                             for idr,item in enumerate(items):
                                 for idc,query in enumerate(item):
-                                    self.tw_display.setItem(idr,idc,QtWidgets.QTableWidgetItem(str(query)))
+                                    self.tw_display.setItem(idr + 1,idc,QtWidgets.QTableWidgetItem(str(query)))
                     except:
                         not_found(inp)
                                     
@@ -312,6 +315,7 @@ class Ui_tool_window(object):
         if table != '':
             row_count = get_row(self.db,table)[0]
             columns =  get_columns(self.db,table)
+            column_name = self.db.get_columns(table)
             if columns == []:
                 msg = QtWidgets.QMessageBox()
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
@@ -323,9 +327,11 @@ class Ui_tool_window(object):
                 column_count = len(columns[0])
                 self.tw_display.setRowCount(row_count)
                 self.tw_display.setColumnCount(column_count)
+                for index,name in enumerate(column_name):
+                    self.tw_display.setItem(0,index,QtWidgets.QTableWidgetItem(str(name[1])))
                 for idr,item in enumerate(columns):
                     for idc,column in enumerate(item):
-                        self.tw_display.setItem(idr,idc,QtWidgets.QTableWidgetItem(str(column)))
+                        self.tw_display.setItem(idr + 1,idc,QtWidgets.QTableWidgetItem(str(column)))
         else:
             msg = QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Critical)
