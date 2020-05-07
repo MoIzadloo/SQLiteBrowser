@@ -185,3 +185,8 @@ class sqlite():
         self.__c.execute(f'SELECT  COUNT(*) FROM {tbname}')
         self.conn_commit()
         return self.__c.fetchall()
+    
+    def get_columns(self,tbname):
+        self.__c.execute(f"PRAGMA table_info('{tbname}')")
+        self.conn_commit()
+        return self.__c.fetchall()
