@@ -325,7 +325,7 @@ class Ui_tool_window(object):
                 msg.exec_()
             else:
                 column_count = len(columns[0])
-                self.tw_display.setRowCount(row_count)
+                self.tw_display.setRowCount(row_count + 1)
                 self.tw_display.setColumnCount(column_count)
                 for index,name in enumerate(column_name):
                     self.tw_display.setItem(0,index,QtWidgets.QTableWidgetItem(str(name[1])))
