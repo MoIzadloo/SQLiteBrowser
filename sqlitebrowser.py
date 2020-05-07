@@ -280,11 +280,11 @@ class Ui_tool_window(object):
                             for column in columns:
                                 if str(inp[1]).upper() in str(column[int(inp[0])-1]).upper():
                                     items.append(column)
-                                    self.tw_display.setRowCount(len(items))
-                                    self.tw_display.setColumnCount(len(column) + 1)
+                                    self.tw_display.setRowCount(len(items) + 1)
+                                    self.tw_display.setColumnCount(len(column))
                             if len(items) != 0:
-                                self.tw_display.setRowCount(len(items))
-                                self.tw_display.setColumnCount(len(column) + 1)
+                                self.tw_display.setRowCount(len(items) + 1)
+                                self.tw_display.setColumnCount(len(column))
                             else:
                                 not_found(inp)
                             for index,name in enumerate(column_name):
