@@ -1,6 +1,6 @@
 SQLiteBrowser Version 0.3
 =============
->Author : Mostafa Izadloo , Reza Salehi
+>Author : Mostafa Izadloo
 ### Description :
 >SQLiteBrowser is a simple tool for browsing sqlite databases and execute sqlite commands as well written in python 3
 ### Dependencies :
